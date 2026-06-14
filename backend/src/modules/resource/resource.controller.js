@@ -13,6 +13,36 @@ const createResource = asyncHandler(async(req, res)=>{
 
 });
 
+const getAllResources = asyncHandler(async(req, res)=>{
+
+    const resources = await resourceService.getAllResources();
+
+    res.status(200).json(
+        new ApiResponse(200, "Resource fetched successfully", resources)
+    );
+});
+
+const getResourceById = asyncHandler(async(req, res)=>{
+
+    const resource = await resourceService.getResourceById(req.params.id);
+
+    res.status(200).json(
+        new ApiResponse(200, "Resource fetched successfully", resource)
+    );
+});
+
+const approveResource = asyncHandler(async(req, res)=>{
+
+    const resource = await resourceService.approveResource(req.params.id);
+
+    res.status(200).json(
+        new ApiResponse(200, "Resource approved", resource)
+    );
+});
+
 module.exports = {
     createResource,
+    getAllResources,
+    getResourceById,
+    approveResource
 };
