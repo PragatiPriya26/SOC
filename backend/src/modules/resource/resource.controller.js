@@ -15,10 +15,24 @@ const createResource = asyncHandler(async(req, res)=>{
 
 const getAllResources = asyncHandler(async(req, res)=>{
 
-    const resources = await resourceService.getAllResources();
+    const page = Number(req.query.page) || 1;
+    const limit =Number(req.query.limit) || 10;
+
+    const {resources, totalResources} = await resourceService.getAllResources(page, limit);
+
+    const totalPages = Math.ceil(totalResources/limit);
 
     res.status(200).json(
-        new ApiResponse(200, "Resource fetched successfully", resources)
+        new ApiResponse(200, "Resource fetched successfully",{
+            resources,
+
+            pgination:{
+                page,
+                limit,
+                totalResources,
+                totalPages
+            }
+        })
     );
 });
 

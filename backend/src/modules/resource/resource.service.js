@@ -7,13 +7,22 @@ const createResource = async(resourceData, userId) =>{
     return resource;
 };
 
-const getAllResources = async()=>{
+const getAllResources = async(page, limit)=>{
+
+    const skip = (page-1)*limit;
+
+    const totalResources = await Resource.countDocuments({approved: true});
 
     const resources = await Resource.find({approved: true})
     .populate("uploadedBy", "name email")
-    .sort({createdAt: -1});
+    .sort({createdAt: -1})
+    .skip(skip)
+    .limit(limit);
 
-    return resources;
+    return {
+        resources,
+        totalResources
+    };
 };
 
 const getResourceById = async(id)=>{
