@@ -7,13 +7,50 @@ const createResource = async(resourceData, userId) =>{
     return resource;
 };
 
-const getAllResources = async(page, limit)=>{
+const getAllResources = async(page, limit, search, subject, semester, tag, faculty)=>{
+
+    const filter = {
+        approved: true
+    };
+
+    if(search){
+        filter.$or =[
+            {
+                title:{
+                    $regex: search,
+                    $options: "i"
+                }
+            },
+            {
+                description:{
+                    $regex: search,
+                    $options: "i"
+                }
+            }
+        ];
+    }
+
+    if(subject){
+        filter.subject = subject;
+    }
+    if(semester){
+        filter.semester = semester;
+    }
+    if(tag){
+        filter.tags = tag.toLowerCase();
+    }
+    if(faculty){
+    filter["faculty.name"] = {
+        $regex: faculty,
+        $options: "i"
+    };
+}
 
     const skip = (page-1)*limit;
 
-    const totalResources = await Resource.countDocuments({approved: true});
+    const totalResources = await Resource.countDocuments(filter);
 
-    const resources = await Resource.find({approved: true})
+    const resources = await Resource.find(filter)
     .populate("uploadedBy", "name email")
     .sort({createdAt: -1})
     .skip(skip)
@@ -30,9 +67,8 @@ const getResourceById = async(id)=>{
     const resource = await Resource.findById(id)
     .populate("uploadedBy", "name email");
 
-
     if(!resource || !resource.approved){
-        throw new ApiError(401, "Resource not found!");
+        throw new ApiError(404, "Resource not found!");
     }
 
     return resource;
@@ -54,10 +90,23 @@ const approveResource = async(id)=>{
     return resource;
 };
 
+const deleteResource = async(id)=>{
+
+    const resource = await Resource.findById(id);
+    if(!resource){
+        throw new ApiError(404, "Resource not found!");
+    }
+
+    await Resource.findByIdAndDelete(id);
+
+    return resource;
+}
+
 
 module.exports = {
     createResource,
     getAllResources,
     getResourceById,
-    approveResource
+    approveResource,
+    deleteResource
 };

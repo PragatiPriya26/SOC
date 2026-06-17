@@ -13,6 +13,7 @@ router.post("/", authMiddleware, validate(createResourceSchema), resourceControl
 router.get("/", resourceController.getAllResources);
 router.get("/:id", resourceController.getResourceById);
 router.patch("/:id/approve",authMiddleware, authorize("admin"),resourceController.approveResource);
+router.delete("/:id",authMiddleware, authorize("admin"), resourceController.deleteResource);
 
 
 module.exports = router;

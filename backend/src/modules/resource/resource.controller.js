@@ -17,8 +17,14 @@ const getAllResources = asyncHandler(async(req, res)=>{
 
     const page = Number(req.query.page) || 1;
     const limit =Number(req.query.limit) || 10;
+    const search =req.query.search || "";
+    const subject =req.query.subject || "";
+    const semester =req.query.semester? Number(req.query.semester): null;
+    const tag =req.query.tag || "";
+    const faculty = req.query.faculty || "";
 
-    const {resources, totalResources} = await resourceService.getAllResources(page, limit);
+    const {resources, totalResources} = await resourceService
+    .getAllResources(page, limit, search, subject, semester, tag, faculty);
 
     const totalPages = Math.ceil(totalResources/limit);
 
@@ -54,9 +60,19 @@ const approveResource = asyncHandler(async(req, res)=>{
     );
 });
 
+const deleteResource = asyncHandler(async(req, res)=>{
+
+    await resourceService.deleteResource(req.params.id);
+
+    res.status(200).json(
+        new ApiResponse(200, "Resource deleted successfully")
+    );
+});
+
 module.exports = {
     createResource,
     getAllResources,
     getResourceById,
-    approveResource
+    approveResource,
+    deleteResource
 };
