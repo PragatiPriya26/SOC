@@ -9,11 +9,24 @@ const createResourceSchema = require("../../validations/resource.validation");
 
 const resourceController = require("./resource.controller");
 
-router.post("/", authMiddleware, validate(createResourceSchema), resourceController.createResource);
+
+//GET
 router.get("/", resourceController.getAllResources);
-router.get("/:id", resourceController.getResourceById);
+router.get("/pending", authMiddleware
+    , authorize("admin"), resourceController.getPendingResources);
+
+
+//POST
+router.post("/", authMiddleware, validate(createResourceSchema), resourceController.createResource);
+
+//PATCH
 router.patch("/:id/approve",authMiddleware, authorize("admin"),resourceController.approveResource);
+
+//DELETE
 router.delete("/:id",authMiddleware, authorize("admin"), resourceController.deleteResource);
+
+router.get("/:id", resourceController.getResourceById);
+
 
 
 module.exports = router;

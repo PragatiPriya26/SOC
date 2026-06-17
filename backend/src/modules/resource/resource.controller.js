@@ -69,10 +69,20 @@ const deleteResource = asyncHandler(async(req, res)=>{
     );
 });
 
+const getPendingResources = asyncHandler(async(req, res)=>{
+
+    const resources = await resourceService.getPendingResources();
+
+    res.status(200).json(
+        new ApiResponse(200, "Fetched Successfully", resources)
+    );
+});
+
 module.exports = {
     createResource,
     getAllResources,
     getResourceById,
     approveResource,
-    deleteResource
+    deleteResource,
+    getPendingResources
 };

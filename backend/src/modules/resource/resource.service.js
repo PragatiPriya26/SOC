@@ -102,11 +102,21 @@ const deleteResource = async(id)=>{
     return resource;
 }
 
+const getPendingResources = async()=>{
+
+    const resources = await Resource.find({
+        approved: false
+    }).populate("uploadedBy", "name email")
+    .sort({createdAt: -1});
+
+    return resources;
+}
 
 module.exports = {
     createResource,
     getAllResources,
     getResourceById,
     approveResource,
-    deleteResource
+    deleteResource,
+    getPendingResources
 };
