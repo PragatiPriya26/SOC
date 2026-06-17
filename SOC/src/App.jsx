@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Login from "./components/pages/Login";
 import Sidebar from "./components/layout/Sidebar";
 import Header from "./components/layout/Header";
 import Dashboard from "./components/pages/Dashboard";
@@ -11,14 +12,28 @@ import AiDoubts from "./components/pages/AiDoubts";
 import Profile from "./components/pages/Profile";
 import Admin from "./components/pages/Admin";
 
-const PAGES = { dashboard: Dashboard, resources: Resources, papers: Papers, community: Community, messages: Messages, projects: Projects, doubts: AiDoubts, profile: Profile, admin: Admin };
+const PAGES = {
+  dashboard: Dashboard,
+  resources: Resources,
+  papers: Papers,
+  community: Community,
+  messages: Messages,
+  projects: Projects,
+  doubts: AiDoubts,
+  profile: Profile,
+  admin: Admin,
+};
 
 export default function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
   const [page, setPage] = useState("dashboard");
   const Page = PAGES[page] || Dashboard;
+
+  if (!loggedIn) return <Login onLogin={() => setLoggedIn(true)} />;
+
   return (
-    <div className="flex flex-col h-screen bg-[#0a0c0f] text-[#e8eaf0] overflow-hidden">
-      <Header onNavigate={setPage} />
+    <div className="flex flex-col h-screen bg-[#fbf7ec] text-[#1a2540] overflow-hidden">
+      <Header onNavigate={setPage} onLogout={() => setLoggedIn(false)} />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar activePage={page} onNavigate={setPage} />
         <main className="flex-1 overflow-y-auto">
