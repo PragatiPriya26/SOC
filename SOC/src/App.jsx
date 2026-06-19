@@ -25,19 +25,35 @@ const PAGES = {
 };
 
 export default function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(null); // null | "student" | "admin"
   const [page, setPage] = useState("dashboard");
   const Page = PAGES[page] || Dashboard;
 
-  if (!loggedIn) return <Login onLogin={() => setLoggedIn(true)} />;
+  if (!user) {
+    return (
+      <Login
+        onLogin={(role) => {
+          setUser(role);
+          setPage(role === "admin" ? "admin" : "dashboard");
+        }}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen bg-[#fbf7ec] text-[#1a2540] overflow-hidden">
-      <Header onNavigate={setPage} onLogout={() => setLoggedIn(false)} />
+      <Header
+        onNavigate={setPage}
+        onLogout={() => {
+          setUser(null);
+          setPage("dashboard");
+        }}
+        userRole={user}
+      />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar activePage={page} onNavigate={setPage} />
+        <Sidebar activePage={page} onNavigate={setPage} userRole={user} />
         <main className="flex-1 overflow-y-auto">
-          <Page onNavigate={setPage} />
+          <Page onNavigate={setPage} userRole={user} />
         </main>
       </div>
     </div>
